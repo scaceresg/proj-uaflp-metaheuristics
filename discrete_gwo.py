@@ -10,9 +10,12 @@ class GWODiscreto(ModeloUAFLP):
         super().__init__(n_dptos, areas_dptos, flujo_mats, lados_inst, rel_asp_max, costo_unit, nombres_dptos, archivo_datos)
 
     # Correr algoritmo DGWO
-    def correr_dgwo(self, tam_manada:int, teta_1:float, teta_2:float):
+    def correr_dgwo(self, tam_manada:int, theta_1:float, theta_2:float):
         self.inicializar_manada(tam_manada)
         self.identificar_lideres()
+        
+        for lobo in self.manada:
+            self.buscar_presa(theta_1, lobo)
 
     # Inicializar la manada
     def inicializar_manada(self, tam_manada):
@@ -31,7 +34,7 @@ class GWODiscreto(ModeloUAFLP):
 
         return self.manada, self.fit_manada
     
-    # Identificar lobos lideres
+    # Identificar lobos lideres: alpha, beta, delta
     def identificar_lideres(self):
         self.lobos_lideres = [] # alpha, beta, delta
         self.fit_lideres = []
@@ -50,28 +53,33 @@ class GWODiscreto(ModeloUAFLP):
         return self.lobos_lideres, self.fit_lideres
 
     # Busqueda de la presa
-    def buscar_presa(self, teta_1):
-        movimiento = np.ceil(self.n_dptos * teta_1).astype(int)
-        corte = np.random.randint(0, self.n_dptos + 1 - movimiento)
-        posiciones = np.arange(corte, corte + movimiento)
+    def buscar_presa(self, theta_1, lobo):
 
-        for ind, lobo in enumerate(self.manada):
+        tam_mov = np.floor(self.n_dptos * theta_1).astype(int)
+        for elem in lobo:
+            pos_inicial = np.random.randint(0, self.n_dptos)
 
-            # Individuo departamentos
-            seccion = lobo[posiciones[0]:posiciones[-1]+1]
-            lobo = np.delete(lobo, posiciones)
+        
+        # corte = np.random.randint(0, self.n_dptos + 1 - movimiento)
+        # posiciones = np.arange(corte, corte + movimiento)
 
-            num_rand = np.random.random(size=1)
+        # for ind, lobo in enumerate(self.manada):
 
-            if corte < self.n_dptos/2:
-                lobo = np.append(lobo, seccion)
-            else:
-                lobo = np.append(seccion, lobo)
+        #     # Individuo departamentos
+        #     seccion = lobo[posiciones[0]:posiciones[-1]+1]
+        #     lobo = np.delete(lobo, posiciones)
 
-            self.manada.pop(ind)
-            self.fit_manada.pop(ind)
-            self.manada.append(lobo)
-            self.fit_manada.append(self.calcular_fitness(lobo))
+        #     num_rand = np.random.random(size=1)
+
+        #     if corte < self.n_dptos/2:
+        #         lobo = np.append(lobo, seccion)
+        #     else:
+        #         lobo = np.append(seccion, lobo)
+
+        #     self.manada.pop(ind)
+        #     self.fit_manada.pop(ind)
+        #     self.manada.append(lobo)
+        #     self.fit_manada.append(self.calcular_fitness(lobo))
 
             # Sebas, estoy en el metodo de buscar_presa. 
             # Me encontre con el problema que `lobo in manada` es una lista de dos elementos [[1, 2, 3..], [0, 1, 0,...1]]

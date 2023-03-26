@@ -13,82 +13,136 @@ lados_inst = np.array([8.54, 13]) # ancho, largo
 max_rel_aspecto = 4
 departamentos = np.arange(1, n_dptos + 1)
 
+dptos = np.arange(1, n_dptos + 1)
+
 def fitness_rand():
     fitness = np.random.randint(20, 100)
 
     return fitness
 
-# Discrete GWO
-tam_manada, teta_1, teta_2 = 10, 0.3, 0.5
+# Parametros del algoritmo
+M = 10
+theta_1 = 0.3
+theta_2 = 0.5
 
-# Creacion de la manada
+# Iniciar manada
 manada = []
-for i in range(tam_manada):
-    lobo = np.random.permutation(departamentos)
-    manada.append(lobo)
-
-# Calcular fitness de la manada
 fit_manada = []
-for lobo in manada:
-    fit_manada.append(fitness_rand())
 
-# Identificar lobos lideres
+for i in range(M):
+    lobo_dp = np.random.permutation(dptos) # Componente permutacion - departamentos
+    lobo_bh = np.random.randint(0, 2, n_dptos-1) # Componente binario - bahias
+    lobo_bh = np.append(lobo_bh, 1) # Bahias debe terminar en 1
+    lobo = [lobo_dp, lobo_bh]
+    fit_lb = np.random.randint(20, 100) # metodo calcular_fitness()
+    
+    manada.append(lobo)
+    fit_manada.append(fit_lb)
+
+print(manada)
+print(fit_manada)
+
+# Identificar lideres
 lobos_lideres = [] # alpha, beta, delta
 fit_lideres = []
 
 while len(lobos_lideres) < 3:
-
-    pos_min = np.argmin(fit_manada)
-
+    pos_min = np.argmin(fit_manada) # Identificar el lobo con min fitness
     lider = manada[pos_min]
     fit_lider = fit_manada[pos_min]
-    manada.pop(pos_min)
+    manada.pop(pos_min) # Sacarlo de la manada
     fit_manada.pop(pos_min)
-
-    lobos_lideres.append(lider)
+    
+    lobos_lideres.append(lider) # Anadir a los lideres
     fit_lideres.append(fit_lider)
 
-# Busqueda de la presa
-movimiento = np.ceil(n_dptos * teta_1).astype(int)
+print(lobos_lideres)
+print(fit_lideres)
 
-corte = np.random.randint(0, n_dptos + 1 - movimiento)
-posiciones = np.arange(corte, corte + movimiento)
+# Realizar busqueda
+tam_mov = np.floor(n_dptos * theta_1).astype(int) # Tamano del movimiento a realizar (e.g. 2 posiciones)
 
 for ind, lobo in enumerate(manada):
-    seccion = lobo[posiciones[0]:posiciones[-1]+1]
-    lobo = np.delete(lobo, posiciones)
+    pos_ini = np.random.randint(0, n_dptos + 1 - tam_mov) # Indice inicial del movimiento (e.g. indice 1)
+    pos_fin = np.random.randint(0, n_dptos + 1 - tam_mov) # Indice en donde se movera la posicion (e.g. indice 4)
+    pos_mov = np.arange(pos_ini, pos_ini + tam_mov) # Indices del movimiento a realizar (e.g. [1, 2])
+    
+    # Movimiento para el elemento de departamentos
+    dp = lobo[0]
+    mov_dp = dp[pos_mov]
+    dp = np.delete(dp, pos_mov)
+    dp = np.insert(dp, pos_fin, mov_dp)
+    
+    # Movimiento para el elemento de bahias
+    bh = lobo[1]
+    mov_bh = bh[pos_mov]
+    bh = np.delete(bh, pos_mov)
+    bh = np.insert(bh, pos_fin, mov_bh)
+    if bh[-1] == 0:
+        bh[-1] = 1
+    
+    new_pos_lb = [dp, bh]
+    new_pos_fit = np.random.randint(20, 100) # metodo calcular_fitness()
+    
+    if new_pos_fit < min(fit_lideres): # Comparar con alpha
+        manada[ind] = lobos_lideres[0] # anadir alpha a la manada
+        fit_manada[ind] = fit_lideres[0]
+        
+        lobos_lideres[0] = new_pos_lb
+        fit_lideres[0] = new_pos_fit
+        break # ?
+    elif new_pos_fit < fit_manada[ind]: # Comparar con posicion actual
+        manada[ind] = new_pos_lb
+        fit_manada[ind] = new_pos_fit
 
-    if corte < n_dptos/2:
-        lobo = np.append(lobo, seccion)
-    else:
-        lobo = np.append(seccion, lobo)
-
-    manada.pop(ind)
-    fit_manada.pop(ind)
-
-    manada.append(lobo)
-    fit_manada.append(fitness_rand())
-
-    if fit_manada[-1] < fit_lideres[0]: # Creo que no es necesario para busqueda pero si en ataque
-        break
-
-# Ataque a la presa
-dist_alpha = n_dptos * teta_2
-alpha = lobos_lideres[0]
-alpha_fit = fit_lideres[0]
-
-beta = lobos_lideres[1]
-beta_fit = fit_lideres[1]
-
-delta = lobos_lideres[-1]
-delta_fit = fit_lideres[-1]
-
-for ind, lob in enumerate(manada):
-
-    pass
-
-
+print('===')
+print(fit_lideres)
+print(lobos_lideres)
+print('===')
 print(manada)
 print(fit_manada)
-    
 
+# Realizar ataque
+da = np.floor(n_dptos * theta_2)
+
+def seleccionar_lider():
+
+    rand = np.random.random()
+    if rand < 0.5:
+        lider = lobos_lideres[0] # alpha
+    elif rand < 0.75:
+        lider = lobos_lideres[1] # beta
+    else:
+        lider = lobos_lideres[2] # delta
+    
+    return lider
+
+def calcular_dist(elem_lobo, elem_lider):
+    
+    dist = 0
+    for ind in range(len(elem_lider)):
+        if elem_lider[ind] != elem_lobo[ind]:
+            dist += 1
+    
+    return dist
+
+def reducir_dist(elem_lobo, elem_lider, index):
+    
+    dp = np.arange(1, n_dptos+1)
+    
+    for i in dp[index:]:
+        lid_val = elem_lider[i-1]
+        lb_val = elem_lobo[i-1]
+        if lid_val != lb_val:
+            p_cambio = np.where(elem_lobo == lid_val)
+            elem_lobo[i-1] = lid_val
+            elem_lobo[p_cambio] = lb_val
+            
+            return elem_lobo, i
+    
+# Prueba de los metodos
+lb1 = np.array([4, 6, 5, 7, 3, 2, 1])
+lid = seleccionar_lider()
+distancia = calcular_dist(lb1, lid[0])
+lb, ind = reducir_dist(lb1, lid[0], 0)
+print(lb)

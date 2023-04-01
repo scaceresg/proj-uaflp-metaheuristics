@@ -34,7 +34,7 @@ class GWODiscreto(ModeloUAFLP):
             lobo_dptos = np.random.permutation(self.departamentos)
             lobo_bah = np.random.randint(0, 2, self.n_dptos-1)
             lobo_bah = np.append(lobo_bah, 1)
-            lobo = [lobo_dptos, lobo_bah]
+            lobo = [lobo_dptos, lobo_bah] # Deberia ser np.array([lst1, lst2])
             fit_lb = self.calcular_fitness(lobo)
 
             self.manada.append(lobo)

@@ -62,6 +62,8 @@ lobo_gris.inicializar_manada(10)
 
 lobo_gris.identificar_lideres()
 
-lobo_gris.buscar_presa(theta_1=0.2)
-lobo_gris.atacar_presa(theta_2=0.4)
+lobo_gris.buscar_presa(theta_1=0.4)
+lobo_gris.atacar_presa(theta_2=0.5)
+
+print(lobo_gris.fit_lideres)
 

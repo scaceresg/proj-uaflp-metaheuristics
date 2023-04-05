@@ -13,9 +13,13 @@ class ModeloUAFLP:
             self.areas_dptos = areas_dptos
             self.flujo_mats = flujo_mats
             self.lados_inst = lados_inst
-            self.costo_unit = costo_unit
             self.rel_asp_max = rel_asp_max
             self.nombres_dptos = nombres_dptos
+            self.costo_unit = costo_unit
+            if self.costo_unit == None:
+                self.costo_unit = np.ones((self.n_dptos, self.n_dptos))
+            else:
+                self.costo_unit = np.full((self.n_dptos, self.n_dptos), self.costo_unit)
         else:
             pass
 
@@ -82,11 +86,6 @@ class ModeloUAFLP:
 
         self.lados_dptos, self.centros_dptos = self.decodificar_sol(sol)
 
-        if self.costo_unit == None:
-            self.costo_unit = np.ones((self.n_dptos, self.n_dptos))
-        else:
-            self.costo_unit = np.full((self.n_dptos, self.n_dptos), self.costo_unit)
-
         # Aplanar lista de centroides
         dptos = sol[0]
         centros = [0] * self.n_dptos
@@ -138,7 +137,7 @@ class ModeloUAFLP:
 
         fitness = costo_total_manejo + costo_total_manejo * (no_factibles ** k_param)
 
-        return fitness
+        return round(fitness, ndigits=2)
     
     def mostrar_layout(self, sol):
         

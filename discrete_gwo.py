@@ -34,7 +34,7 @@ class GWODiscreto(ModeloUAFLP):
             lobo_dptos = np.random.permutation(self.departamentos)
             lobo_bah = np.random.randint(0, 2, self.n_dptos-1)
             lobo_bah = np.append(lobo_bah, 1)
-            lobo = [lobo_dptos, lobo_bah] # Deberia ser np.array([lst1, lst2])
+            lobo = np.array([list(lobo_dptos), list(lobo_bah)])
             fit_lb = self.calcular_fitness(lobo)
 
             self.manada.append(lobo)
@@ -80,7 +80,7 @@ class GWODiscreto(ModeloUAFLP):
             if lobo_bh[-1] == 0:
                 lobo_bh[-1] = 1 # El elemento de bahías debe terminar en 1
             
-            nueva_pos_lobo = [lobo_dp, lobo_bh]
+            nueva_pos_lobo = np.array([list(lobo_dp), list(lobo_bh)])
             nueva_pos_fit = self.calcular_fitness(nueva_pos_lobo)
 
             # Comparar lobo con alpha
@@ -104,7 +104,7 @@ class GWODiscreto(ModeloUAFLP):
         return pos_movimiento, pos_final
 
     # Realizar movimiento en el proceso de búsqueda
-    def realizar_movimiento(elem_lobo, pos_movimiento, pos_final):
+    def realizar_movimiento(self, elem_lobo, pos_movimiento, pos_final):
         
         movimiento = elem_lobo[pos_movimiento]
         elem_lobo = np.delete(elem_lobo, pos_movimiento)
@@ -132,8 +132,9 @@ class GWODiscreto(ModeloUAFLP):
                     elem, i = self.reducir_dist(elem, lider[ind], i)
                     distancia = self.calcular_dist(elem, lider[ind])
                 
-                nuevo_atq_lobo.append(elem)
+                nuevo_atq_lobo.append(list(elem))
 
+            nuevo_atq_lobo = np.array(nuevo_atq_lobo)
             nuevo_atq_fit = self.calcular_fitness(nuevo_atq_lobo)
 
             # Si fitness es mejor que lobo actual: actualizar

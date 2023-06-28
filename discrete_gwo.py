@@ -14,7 +14,7 @@ class GWODiscreto(ModeloUAFLP):
         
         
         # Construir el cuerpo del algoritmo: iteraciones o no_mejoras despues de tantas veces
-        self.inicializar_manada(tam_manada)
+        self.generar_manada(tam_manada)
         self.identificar_lideres()
         self.buscar_presa(theta_1)
         self.atacar_presa(theta_2)
@@ -26,7 +26,7 @@ class GWODiscreto(ModeloUAFLP):
 
 
     # Inicializar la manada
-    def inicializar_manada(self, tam_manada):
+    def generar_manada(self, tam_manada):
         self.manada = []
         self.fit_manada = []
 

@@ -58,7 +58,7 @@ lobo_gris = GWODiscreto(n_dptos=n_dptos, areas_dptos=areas, flujo_mats=fl_materi
 
 print(lobo_gris.calcular_fitness(solucion))
 
-lobo_gris.inicializar_manada(10)
+lobo_gris.generar_manada(10)
 
 lobo_gris.identificar_lideres()
 

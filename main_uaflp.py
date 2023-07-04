@@ -26,8 +26,8 @@ nom_dpts = ['Recepción', 'Confección', 'Estampado', 'Terminación',
 solucion = np.array([[6, 1, 7, 4, 9, 11, 8, 3, 2, 10, 5], # best
                      [0, 0, 0, 0, 0,  1, 0, 0, 0,  0, 1]])
 
-# solucion = np.array([[1, 7, 9, 4, 10, 5, 6, 8, 3, 2, 11], # chosen
-#                      [0, 0, 0, 0,  0, 1, 0, 0, 0, 0,  1]])
+solucion = np.array([[1, 7, 9, 4, 10, 5, 6, 8, 3, 2, 11], # chosen
+                     [0, 0, 0, 0,  0, 1, 0, 0, 0, 0,  1]])
 
 # O7
 # n_dptos = 7
@@ -56,7 +56,7 @@ n_iters = 1
 while n_iters < 11:
 
     resultados_gwo = lobo_gris.optimizacion_lobo_gris(tam_manada=15, n_lideres=3, theta_1=0.4, 
-                                                      theta_2=0.2, theta_3=0.6, tiempo_lim=600)
+                                                      theta_2=0.4, theta_3=0.6, tiempo_lim=600)
     
     plt.plot(resultados_gwo['vals_fitness'], label=f'iter_{n_iters}')
 

@@ -6,8 +6,8 @@ from uaflp import ModeloUAFLP
 class AlgLoboGris(ModeloUAFLP):
 
     # Constructor de la clase (hereda las caracteristicas de la clase ModeloUAFLP)
-    def __init__(self, n_dptos: int, areas_dptos: np.ndarray, flujo_materiales: np.ndarray, lados_instalacion: np.ndarray, tasa_aspecto_max: int, costo_manejo_unit: float = None, nombres_dptos: list = None, archivo_datos: str = None) -> None:
-        super().__init__(n_dptos, areas_dptos, flujo_materiales, lados_instalacion, tasa_aspecto_max, costo_manejo_unit, nombres_dptos, archivo_datos)
+    def __init__(self, n_dptos: int = None, areas_dptos: np.ndarray = None, flujo_materiales: np.ndarray = None, lados_instalacion: np.ndarray = None, tasa_aspecto_max: int = None, costo_manejo_unit: float = None, nombres_dptos: list = None, mejor_valor: float = None, archivo_datos: str = None) -> None:
+        super().__init__(n_dptos, areas_dptos, flujo_materiales, lados_instalacion, tasa_aspecto_max, costo_manejo_unit, nombres_dptos, mejor_valor, archivo_datos)
 
     # Correr algoritmo de lobo gris
     def optimizacion_lobo_gris(self, tam_manada:int, n_lideres:int, theta_1:float, theta_2:float, theta_3:float=None, tiempo_lim:int=3600):

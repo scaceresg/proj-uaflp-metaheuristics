@@ -1,12 +1,14 @@
+import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
 class ModeloUAFLP:
     
     # Constructor de la clase (argumentos requeridos para crear la clase)
-    def __init__(self, n_dptos:int, areas_dptos:np.ndarray, flujo_materiales:np.ndarray,
-                lados_instalacion:np.ndarray, tasa_aspecto_max:int, costo_manejo_unit:float=None,
-                nombres_dptos:list=None, archivo_datos:str=None) -> None:
+    def __init__(self, n_dptos:int=None, areas_dptos:np.ndarray=None, flujo_materiales:np.ndarray=None,
+                lados_instalacion:np.ndarray=None, tasa_aspecto_max:int=None, costo_manejo_unit:float=None,
+                nombres_dptos:list=None, mejor_valor:float=None, archivo_datos:str=None) -> None:
         
         if archivo_datos == None:
             self.n_dptos = n_dptos
@@ -16,6 +18,7 @@ class ModeloUAFLP:
             self.lados_instalacion = lados_instalacion # ancho, largo
             self.tasa_aspecto_max = tasa_aspecto_max
             self.nombres_dptos = nombres_dptos
+            self.mejor_val = mejor_valor
             self.costo_manejo_unit = costo_manejo_unit
             
             # Definir matriz de costo de manejo unitario
@@ -23,9 +26,55 @@ class ModeloUAFLP:
                 matriz_costos_dptos = np.ones((self.n_dptos, self.n_dptos))
             else:
                 matriz_costos_dptos = np.full((self.n_dptos, self.n_dptos), self.costo_manejo_unit)
-        else: # Crear construcción para extraer datos de archivo de datos
-            pass 
-                
+        else: # Extraer datos de archivo de datos
+            self.obtener_datos(arch_datos=archivo_datos)
+
+    # Método para leer archivo de datos
+    def obtener_datos(self, arch_datos:str):
+
+        # Cambiar el directorio
+        path = os.path.dirname(os.path.realpath(__file__)) + '\\uaflp-instances'
+
+        try:
+            os.chdir(path)
+        except FileNotFoundError:
+            print(f'Directory: {path} does not exist')
+            sys.exit()
+        except NotADirectoryError:
+            print(f'{path} is not a directory')
+            sys.exit()
+
+        # Abrir el archivo de datos
+        with open(arch_datos) as f:
+            lines = f.readlines()
+
+        # Leer cada linea del archivo
+        pr_linea = lines[0].split() # [n_dptos, ancho_inst, largo_inst, tasa_asp, costo_unit, mejor_val]
+        seg_linea = lines[1].split() # [areas_dptos 1,..., n]
+        ter_linea = lines[2].split() # [nombres_dptos 1,..., n] o ['None']
+        fl_mats = [] # lista de listas flujos de materials
+        for l in lines[3:]:
+            ln = [float(x) for x in l.split()]
+            fl_mats.append(ln)
+
+        # Guardar los parametros del modelo UAFLP
+        self.n_dptos = int(pr_linea[0])
+        self.departamentos = np.arange(1, self.n_dptos + 1)
+        self.lados_instalacion = np.array([float(x) for x in pr_linea[1:3]])
+        self.tasa_aspecto_max = int(pr_linea[3])
+        self.costo_manejo_unit = float(pr_linea[4])
+        self.matriz_costos_dptos = np.full((self.n_dptos, self.n_dptos), self.costo_manejo_unit)
+        self.mejor_val = float(pr_linea[-1])
+        self.areas_dptos = np.array([float(x) for x in seg_linea])
+
+        if len(ter_linea) > 1:
+            self.nombres_dptos = [x for x in ter_linea]
+        else:
+            self.nombres_dptos = None
+
+        self.flujo_materiales = np.array(fl_mats)
+        
+
     # Método para decodificar la solución 
     def decodificar_solucion(self, solucion:np.ndarray):
         self.identificar_bahias(solucion)

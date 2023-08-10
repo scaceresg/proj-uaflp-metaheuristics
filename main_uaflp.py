@@ -3,31 +3,31 @@ from alg_lobo_gris import AlgLoboGris
 import matplotlib.pyplot as plt
 
 # Sportswear manuf
-n_dptos = 11
-areas_dptos = np.array([50.00, 195.50, 83.27, 100.39, 67.20, 153.00, 
-                        153.00, 131.25, 52.90, 52.90, 100.00])
-fl_materiales = np.array([[  0,   0,   0,   0, 0,   0, 0, 0, 0, 0, 0],
-                          [  0,   0,   0,   0, 0,   0, 0, 0, 0, 0, 0],
-                          [  0, 110,   0,   0, 0,   0, 0, 0, 0, 0, 0],
-                          [  0, 110,   0,   0, 0,   0, 0, 0, 0, 0, 0],
-                          [  0,   0,   0,   0, 0,   0, 0, 0, 0, 0, 0],
-                          [110,   0,   0,   0, 0,   0, 0, 0, 0, 0, 0],
-                          [110,   0,   0, 110, 0,   0, 0, 0, 0, 0, 0],
-                          [  0,   0, 110,   0, 0, 110, 0, 0, 0, 0, 0],
-                          [ 11,   0,   0,  11, 0,   0, 0, 0, 0, 0, 0],
-                          [  0,   0,   0,   0, 4,   0, 0, 0, 4, 0, 0],
-                          [  0,   2,   2,   2, 1,   0, 0, 2, 1, 1, 0]])
-lados_inst = np.array([25.00, 45.60]) # ancho, largo
-max_rel_aspecto = 4
-nom_dpts = ['Recepción', 'Confección', 'Estampado', 'Terminación', 
-            'Administrativa', 'Almacén MP', 'Almacén PT', 'Corte',
-            'Calidad', 'Diseño', 'Descanso']
+# n_dptos = 11
+# areas_dptos = np.array([50.00, 195.50, 83.27, 100.39, 67.20, 153.00, 
+#                         153.00, 131.25, 52.90, 52.90, 100.00])
+# fl_materiales = np.array([[  0,   0,   0,   0, 0,   0, 0, 0, 0, 0, 0],
+#                           [  0,   0,   0,   0, 0,   0, 0, 0, 0, 0, 0],
+#                           [  0, 110,   0,   0, 0,   0, 0, 0, 0, 0, 0],
+#                           [  0, 110,   0,   0, 0,   0, 0, 0, 0, 0, 0],
+#                           [  0,   0,   0,   0, 0,   0, 0, 0, 0, 0, 0],
+#                           [110,   0,   0,   0, 0,   0, 0, 0, 0, 0, 0],
+#                           [110,   0,   0, 110, 0,   0, 0, 0, 0, 0, 0],
+#                           [  0,   0, 110,   0, 0, 110, 0, 0, 0, 0, 0],
+#                           [ 11,   0,   0,  11, 0,   0, 0, 0, 0, 0, 0],
+#                           [  0,   0,   0,   0, 4,   0, 0, 0, 4, 0, 0],
+#                           [  0,   2,   2,   2, 1,   0, 0, 2, 1, 1, 0]])
+# lados_inst = np.array([25.00, 45.60]) # ancho, largo
+# max_rel_aspecto = 4
+# nom_dpts = ['Recepción', 'Confección', 'Estampado', 'Terminación', 
+#             'Administrativa', 'Almacén MP', 'Almacén PT', 'Corte',
+#             'Calidad', 'Diseño', 'Descanso']
 
-solucion = np.array([[6, 1, 7, 4, 9, 11, 8, 3, 2, 10, 5], # best
-                     [0, 0, 0, 0, 0,  1, 0, 0, 0,  0, 1]])
+# solucion = np.array([[6, 1, 7, 4, 9, 11, 8, 3, 2, 10, 5], # best
+#                      [0, 0, 0, 0, 0,  1, 0, 0, 0,  0, 1]])
 
-solucion = np.array([[1, 7, 9, 4, 10, 5, 6, 8, 3, 2, 11], # chosen
-                     [0, 0, 0, 0,  0, 1, 0, 0, 0, 0,  1]])
+# solucion = np.array([[1, 7, 9, 4, 10, 5, 6, 8, 3, 2, 11], # chosen
+#                      [0, 0, 0, 0,  0, 1, 0, 0, 0, 0,  1]])
 
 # O7
 # n_dptos = 7
@@ -45,11 +45,10 @@ solucion = np.array([[1, 7, 9, 4, 10, 5, 6, 8, 3, 2, 11], # chosen
 # solucion = np.array([[3, 5, 7, 1, 4, 6, 2], 
 #                      [0, 0, 1, 0, 0, 0, 1]])
 
+data_inst = 'inst_vC10R-a.txt'
 
 # Main()
-lobo_gris = AlgLoboGris(n_dptos=n_dptos, areas_dptos=areas_dptos, flujo_materiales=fl_materiales, 
-                        lados_instalacion=lados_inst, tasa_aspecto_max=max_rel_aspecto, 
-                        nombres_dptos=nom_dpts)
+lobo_gris = AlgLoboGris(archivo_datos=data_inst)
 
 n_iters = 1
 

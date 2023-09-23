@@ -10,19 +10,49 @@ class AlgLoboGris(ModeloUAFLP):
         super().__init__(n_dptos, areas_dptos, flujo_materiales, lados_instalacion, tasa_aspecto_max, costo_manejo_unit, nombres_dptos, mejor_valor, archivo_datos)
 
     # Correr algoritmo de lobo gris
-    def optimizacion_lobo_gris(self, tam_manada:int, n_lideres:int, theta_1:float, theta_2:float, theta_3:float=None, tiempo_lim:int=3600):
-        
+    def optimizacion_lobo_gris(self, tam_manada:int, n_lideres:int, theta_1:float, theta_2:float, theta_3:float=1, 
+                               tiempo_lim:int=3600):
+        """_summary_
+
+        Args:
+            tam_manada (int): Hace referencia al tamaño de la manada, o el número de lobos (soluciones) 
+                            que comprenden la manada dentro del algoritmo.
+            n_lideres (int): Hace referencia al número de lobos líderes, los cuales guiarán la búsqueda 
+                            la presa (mejor solución). Solo puede tomar los valores `1` (lobo alfa) o `3` 
+                            (lobos alfa, beta y delta). Los demás lobos son tratados como lobos de la 
+                            manada (lobos omega).
+            theta_1 (float): Hace referencia al porcentaje del tamaño del movimiento (n * theta_1) que debe 
+                            realizarse durante el comportamiento de búsqueda de la presa. Es un parámetro 
+                            que debe estar entre 0 y 1.
+            theta_2 (float): Hace referencia al porcentaje de la distancia mínima (n * theta_2) que debe 
+                            tener cada lobo en la manada con respecto a uno de los líderes. Es un parámetro 
+                            que debe estar entre 0 y 1.
+            theta_3 (float): (Opcional si n_lideres = 1) Hace referencia a la probabilidad de seleccionar al 
+                            lobo alfa (mejor solución) entre los lobos líderes para reducir la distancia de 
+                            los lobos en la manada. Es un parámetro que debe estar entre 0 y 1.
+            tiempo_lim (int, opcional): Tiempo de corrida del algoritmo en segundos. Por defecto 600.
+
+        Raises:
+            ValueError: Si el valor del parámetro tam_manada no está entre n_lideres + 1 y 15 (inclusive).
+            ValueError: Si el valor del parámetro n_lideres no es 1 o 3.
+            ValueError: Si el valor de los parámetros theta_1, theta_2 y theta_3 no están entre 0 y 1.
+
+        Returns:
+            dict: Diccionario con las mejores soluciones ('sols_uaflp') y sus respectivas funciones fitness
+                    ('vals_fitness')
+        """
         if tam_manada not in range(n_lideres + 1, 16):
-            raise ValueError('Parameter value tam_manada should be greater than n_lideres and lower than 15')
+            raise ValueError(f'El valor del parametro tam_manada deberia ser entre n_lideres + 1 y 15 (inclusive): {tam_manada}')
         
         if n_lideres not in {1, 3}:
-            raise ValueError('Parameter value n_lideres should be equal to 1 or equal to 3')
+            raise ValueError(f'El valor del parametro n_lideres deberia ser igual a 1 o 3: {n_lideres}')
 
-        if theta_1 <= 0 or theta_1 >= 1 or theta_2 <= 0 or theta_2 >= 1 or theta_3 <= 0 or theta_3 >= 1:
-            raise ValueError('Parameter values theta_1, theta_2 and theta_3 should be greater than 0 and lower than 1')
+        if theta_1 <= 0 or theta_1 >= 1 or theta_2 <= 0 or theta_2 >= 1 or theta_3 <= 0 or theta_3 > 1:
+            raise ValueError(f'El valor de los parametros theta_1, theta_2 and theta_3 deberia estar entre 0 y 1: {[theta_1, theta_2, theta_3]}')
 
-        if n_lideres == 1 and theta_3 != None:
-            raise AttributeError('Parameter theta_3 has no influence when n_lideres is 1 and should be None')
+        if n_lideres == 1:
+            theta_3 = 1
+            print('El valor del parametro theta_3 se ha igualado a 1 ya que el parametro n_lideres es igual a 1')
 
         timeout = time() + tiempo_lim
         lobos_sols = []

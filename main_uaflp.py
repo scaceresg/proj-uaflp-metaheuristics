@@ -2,7 +2,6 @@ import os
 import sys
 import pandas as pd
 from alg_lobo_gris import AlgLoboGris
-import matplotlib.pyplot as plt
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(base_dir, 'uaflp-instances')
@@ -16,55 +15,53 @@ except NotADirectoryError:
     print(f'{path} is not a directory')
     sys.exit()
 
-# Valores de los parámetros
-val_mnd = 10 # Posibles valores: [6, 8, 10, 12, 15]
-val_ld = 3 # Posibles valores: [1, 3]
-val_t1 = 0.4 # Posibles valores: [0.2, 0.4, 0.6, 0.8]
-val_t2 = 0.4 # Posibles valores: [0.2, 0.4, 0.6, 0.8]
-val_t3 = 0.4 # Posibles valores: [0.2, 0.4, 0.6, 0.8]
-t_lim = 300 # en segundos
-n_rondas = 10 # Numero de veces que el algoritmo corre
+################## NO MODIFICAR ##################
+lst_parametros = ['tam_manada', 'n_lideres', 'theta_1', 'theta_2', 'theta_3']
+
+################## MODIFICAR AL GUSTO (MANTENER EN LISTAS) ##################
+lst_vals_params = [[6, 8, 10, 12, 15], [1, 3], [0.2, 0.4, 0.6, 0.8], [0.2, 0.4, 0.6, 0.8], [0.2, 0.4, 0.6, 0.8]] 
+tiempo_limite = 60 # en segundos (MANTENER ENTERO)
+n_rondas = 2 # Numero de veces que el algoritmo corre (MANTENER ENTERO) 
 
 # Crear diccionario para guardar los resultados
-resultados = {'inst': [],
-              'n_dptos': []}
+resultados = {}
 
-fig = plt.figure(dpi=300)
-
+################## MODIFICAR ##################
+# Nombre del archivo con la instancia de UAFLP (MANTENER EN CADENA DE TEXTO)
 data_inst = 'inst_O9.txt'
 
 lobo_gris = AlgLoboGris(archivo_datos=data_inst)
 
-rond = 0
-
-while rond < n_rondas:
-
-    resultados[f'UB_{rond}'] = []
-    resultados[f'sol_{rond}'] = []
-
-    res = lobo_gris.optimizacion_lobo_gris(tam_manada=val_mnd, n_lideres=val_ld, theta_1=val_t1,
-                                           theta_2=val_t2, theta_3=val_t3, tiempo_lim=t_lim)
+for param, vals_param in zip(lst_parametros, lst_vals_params):
     
-    plt.plot(res['vals_fitness'], label=f'ronda: {rond}')
+    if len(vals_param) < 2:
+        raise AttributeError(f'Deben haber al menos dos valores de parametros para el parametro {param}')
+    
+    resultados[f'{param}'] = []
 
-    ub = res['vals_fitness'][-1]
-    sol = res['sols_uaflp'][-1]
+    for rnd in range(n_rondas):
+        resultados[f'UB_{rnd}'] = []
+        resultados[f'sol_{rnd}'] = []
 
-    resultados[f'UB_{rond}'].append(ub)
-    resultados[f'sol_{rond}'].append(sol)
+    for v_param in vals_param:
+        
+        print(f'Corriendo experimentos para el parametro {param} = {v_param}')
+        resultados[f'{param}'].append(v_param)
 
-    print(f'El algoritmo finaliza la ronda {rond} para la inst {data_inst} con UB = {ub}')
+        ronda = 0
 
-    rond += 1    
+        while ronda < n_rondas:
 
-df = pd.DataFrame(res)
-df.set_index('inst', inplace=True)
+            exp = lobo_gris.correr_experimentos(parametro=param, valor_param=v_param, tmp_lim=tiempo_limite)
 
-print(df.head())
+            resultados[f'UB_{ronda}'].append(exp['UB'])
+            resultados[f'sol_{ronda}'].append(exp['solucion'])
 
-plt.xlabel('Iteraciones')
-plt.ylabel('Valor de la función fitness')
-plt.title('Evolución del valor de la función fitness por ronda')
-plt.legend()
+            print(f'Finalizando experimentos para el parametro {param} = {v_param} en la ronda {ronda}')
+            ronda += 1
 
-plt.show()
+    df = pd.DataFrame(resultados)
+    df.set_index(f'{param}', inplace=True)    
+    df.to_excel(f'resultados-{data_inst}-{param}.xlsx')
+
+print('Se finalizaron todos los experimentos')

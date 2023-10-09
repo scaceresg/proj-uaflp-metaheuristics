@@ -236,3 +236,41 @@ class AlgLoboGris(ModeloUAFLP):
             elem_lobo[ind_actual] = elem_lider[ind_actual]
 
         return elem_lobo
+    
+    # Metodo para correr experimentos 
+    def correr_experimentos(self, parametro:str, valor_param:list, tmp_lim:int=400):
+
+        if parametro == 'tam_manada':
+            
+            res = self.optimizacion_lobo_gris(tam_manada=valor_param, n_lideres=3, theta_1=0.4, 
+                                              theta_2=0.4, theta_3=0.4, tiempo_lim=tmp_lim)
+
+            return {'UB': res['vals_fitness'][-1], 'solucion': res['sols_uaflp'][-1]}
+        
+        elif parametro == 'n_lideres':
+
+            res = self.optimizacion_lobo_gris(tam_manada=10, n_lideres=valor_param, theta_1=0.4, 
+                                              theta_2=0.4, theta_3=0.4, tiempo_lim=tmp_lim)
+            
+            return {'UB': res['vals_fitness'][-1], 'solucion': res['sols_uaflp'][-1]}
+        
+        elif parametro == 'theta_1':
+
+            res = self.optimizacion_lobo_gris(tam_manada=10, n_lideres=3, theta_1=valor_param, 
+                                              theta_2=0.4, theta_3=0.4, tiempo_lim=tmp_lim)
+            
+            return {'UB': res['vals_fitness'][-1], 'solucion': res['sols_uaflp'][-1]}
+        
+        elif parametro == 'theta_2':
+
+            res = self.optimizacion_lobo_gris(tam_manada=10, n_lideres=3, theta_1=0.4, 
+                                              theta_2=valor_param, theta_3=0.4, tiempo_lim=tmp_lim)
+            
+            return {'UB': res['vals_fitness'][-1], 'solucion': res['sols_uaflp'][-1]}
+        
+        elif parametro == 'theta_3':
+
+            res = self.optimizacion_lobo_gris(tam_manada=10, n_lideres=3, theta_1=0.4, 
+                                              theta_2=0.4, theta_3=valor_param, tiempo_lim=tmp_lim)
+            
+            return {'UB': res['vals_fitness'][-1], 'solucion': res['sols_uaflp'][-1]}

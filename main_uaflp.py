@@ -19,12 +19,9 @@ except NotADirectoryError:
 lst_parametros = ['tam_manada', 'n_lideres', 'theta_1', 'theta_2', 'theta_3']
 
 ################## MODIFICAR AL GUSTO (MANTENER EN LISTAS) ##################
-lst_vals_params = [[6, 8, 10, 12, 15], [1, 3], [0.2, 0.4, 0.6, 0.8], [0.2, 0.4, 0.6, 0.8], [0.2, 0.4, 0.6, 0.8]] 
+lst_vals_params = [[10, 12, 15], [1, 3], [0.4, 0.6, 0.8], [0.4, 0.6, 0.8], [0.4, 0.6, 0.8]] 
 tiempo_limite = 60 # en segundos (MANTENER ENTERO)
 n_rondas = 2 # Numero de veces que el algoritmo corre (MANTENER ENTERO) 
-
-# Crear diccionario para guardar los resultados
-resultados = {}
 
 ################## MODIFICAR ##################
 # Nombre del archivo con la instancia de UAFLP (MANTENER EN CADENA DE TEXTO)
@@ -34,6 +31,9 @@ lobo_gris = AlgLoboGris(archivo_datos=data_inst)
 
 for param, vals_param in zip(lst_parametros, lst_vals_params):
     
+    # Crear diccionario para guardar los resultados
+    resultados = {}
+
     if len(vals_param) < 2:
         raise AttributeError(f'Deben haber al menos dos valores de parametros para el parametro {param}')
     
@@ -50,6 +50,7 @@ for param, vals_param in zip(lst_parametros, lst_vals_params):
 
         ronda = 0
 
+        # Correr el mismo valor de parametro en n_rondas
         while ronda < n_rondas:
 
             exp = lobo_gris.correr_experimentos(parametro=param, valor_param=v_param, tmp_lim=tiempo_limite)
@@ -60,6 +61,7 @@ for param, vals_param in zip(lst_parametros, lst_vals_params):
             print(f'Finalizando experimentos para el parametro {param} = {v_param} en la ronda {ronda}')
             ronda += 1
 
+    # El codigo guarda un Excel por cada parametro para la instancia y los valores dados arriba
     df = pd.DataFrame(resultados)
     df.set_index(f'{param}', inplace=True)    
     df.to_excel(f'resultados-{data_inst}-{param}.xlsx')

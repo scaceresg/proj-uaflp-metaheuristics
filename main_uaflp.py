@@ -25,7 +25,7 @@ n_rondas = 2 # Numero de veces que el algoritmo corre (MANTENER ENTERO)
 
 ################## MODIFICAR ##################
 # Nombre del archivo con la instancia de UAFLP (MANTENER EN CADENA DE TEXTO)
-data_inst = 'inst_O9.txt'
+data_inst = 'inst_propuesta_08.txt'
 
 lobo_gris = AlgLoboGris(archivo_datos=data_inst)
 

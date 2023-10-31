@@ -15,55 +15,49 @@ except NotADirectoryError:
     print(f'{path} is not a directory')
     sys.exit()
 
-################## NO MODIFICAR ##################
-lst_parametros = ['tam_manada', 'n_lideres', 'theta_1', 'theta_2', 'theta_3']
+with open('uaflp_instances.txt') as f:
+    data = f.readlines()
 
-################## MODIFICAR AL GUSTO (MANTENER EN LISTAS) ##################
-lst_vals_params = [[10, 12, 15], [1, 3], [0.4, 0.6, 0.8], [0.4, 0.6, 0.8], [0.4, 0.6, 0.8]] 
-tiempo_limite = 60 # en segundos (MANTENER ENTERO)
-n_rondas = 2 # Numero de veces que el algoritmo corre (MANTENER ENTERO) 
+# Set of parameters to evaluate
+set_params = [[10, 1, 0.4, 0.2, 1], [10, 3, 0.6, 0.4, 0.4], [15, 1, 0.4, 0.2, 1],
+              [15, 3, 0.6, 0.4, 0.6], [15, 3, 0.4, 0.2, 0.4], [12, 3, 0.2, 0.3, 0.5]]
 
-################## MODIFICAR ##################
-# Nombre del archivo con la instancia de UAFLP (MANTENER EN CADENA DE TEXTO)
-data_inst = 'inst_propuesta_08.txt'
+t_limite = 60
+n_rondas = 2
 
-lobo_gris = AlgLoboGris(archivo_datos=data_inst)
+for ln in data:
 
-for param, vals_param in zip(lst_parametros, lst_vals_params):
-    
-    # Crear diccionario para guardar los resultados
+    inst = ln.split()[0]
+
+    lobo_gris = AlgLoboGris(archivo_datos=inst)
+
     resultados = {}
-
-    if len(vals_param) < 2:
-        raise AttributeError(f'Deben haber al menos dos valores de parametros para el parametro {param}')
-    
-    resultados[f'{param}'] = []
+    resultados['set_params'] = []
 
     for rnd in range(n_rondas):
         resultados[f'UB_{rnd}'] = []
-        resultados[f'sol_{rnd}'] = []
 
-    for v_param in vals_param:
+    for ind, params in enumerate(set_params):
         
-        print(f'Corriendo experimentos para el parametro {param} = {v_param}')
-        resultados[f'{param}'].append(v_param)
+        print(f'Corriendo set de parámetros {ind} = {params}')
+        resultados[f'set_params'].append(f'set_params_{ind}')
 
-        ronda = 0
+        t_manada, n_lideres, theta_1, theta_2, theta_3 = params
+        
+        rnd = 0
+        while rnd < n_rondas:
 
-        # Correr el mismo valor de parametro en n_rondas
-        while ronda < n_rondas:
+            lobo_res = lobo_gris.optimizacion_lobo_gris(tam_manada=t_manada, n_lideres=n_lideres, theta_1=theta_1,
+                                                        theta_2=theta_2, theta_3=theta_3, tiempo_lim=t_limite)
 
-            exp = lobo_gris.correr_experimentos(parametro=param, valor_param=v_param, tmp_lim=tiempo_limite)
+            resultados[f'UB_{rnd}'].append(lobo_res['vals_fitness'][-1])
 
-            resultados[f'UB_{ronda}'].append(exp['UB'])
-            resultados[f'sol_{ronda}'].append(exp['solucion'])
+            print(f'Finalizando corrida de set de parámetros {ind} para la instancia {inst} en la ronda {rnd}')
 
-            print(f'Finalizando experimentos para el parametro {param} = {v_param} en la ronda {ronda}')
-            ronda += 1
+            rnd += 1
 
-    # El codigo guarda un Excel por cada parametro para la instancia y los valores dados arriba
     df = pd.DataFrame(resultados)
-    df.set_index(f'{param}', inplace=True)    
-    df.to_excel(f'resultados-{data_inst}-{param}.xlsx')
+    df.set_index('set_params', inplace=True)    
+    df.to_excel(f'resultados-{inst}-set-params.xlsx')
 
 print('Se finalizaron todos los experimentos')

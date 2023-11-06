@@ -1,0 +1,11 @@
+  8   25  45   4  1  9999
+ 88.59 150 298.8 240 240 28.8 32 32
+ Cutting Finishing Varnish-Painting Loading-Unloading Finished-Pts Administrative Showers-Toilets Resting-Dinner
+   0   0   0   0   0   0   0   0
+ 750   0   0   0   0   0   0   0
+   0 750   0   0   0   0   0   0
+   0   0 750   0   0   0   0   0
+   0   0   0 750   0   0   0   0
+   2   0   0   2   2   0   0   0
+   2   2   2   2   2   2   0   0 
+   2   2   2   2   2   2   0   0

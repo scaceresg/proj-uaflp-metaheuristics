@@ -20,10 +20,10 @@ with open('uaflp_instances.txt') as f:
 
 # Set of parameters to evaluate
 set_params = [[10, 1, 0.4, 0.2, 1], [10, 3, 0.6, 0.4, 0.4], [15, 1, 0.4, 0.2, 1],
-              [15, 3, 0.6, 0.4, 0.6], [15, 3, 0.4, 0.2, 0.4], [12, 3, 0.2, 0.3, 0.5]]
+              [15, 3, 0.6, 0.4, 0.6], [15, 3, 0.4, 0.2, 0.4], [15, 3, 0.2, 0.4, 0.6]]
 
-t_limite = 60
-n_rondas = 2
+t_limite = 600
+n_rondas = 10
 
 for ln in data:
 

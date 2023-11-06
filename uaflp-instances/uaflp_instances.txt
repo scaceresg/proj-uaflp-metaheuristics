@@ -1,5 +1,3 @@
-inst_O7.txt
-inst_O8.txt
 inst_O9.txt
 inst_vC10R-a.txt
 inst_MB12.txt

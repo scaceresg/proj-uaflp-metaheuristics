@@ -1,4 +1,4 @@
-  11            25     45.60          4       1     8875.19
+  11            25     45.60          4       1     8585.08
   50.00 195.50  83.27 100.39  67.20 153.00 153.00 131.25  52.90  52.90 100.00
   Recepcion Confecccion Estampado Terminacion Administrativa AlmacenMP AlmacenPT Corte Calidad Planeacion Descanso
    0      0      0      0      0      0      0      0      0      0      0

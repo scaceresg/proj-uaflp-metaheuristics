@@ -15,12 +15,11 @@ except NotADirectoryError:
     print(f'{path} is not a directory')
     sys.exit()
 
-with open('uaflp_instances.txt') as f:
+with open('uaflp_instances-case.txt') as f:
     data = f.readlines()
 
 # Set of parameters to evaluate
-set_params = [[10, 1, 0.4, 0.2, 1], [10, 3, 0.6, 0.4, 0.4], [15, 1, 0.4, 0.2, 1],
-              [15, 3, 0.6, 0.4, 0.6], [15, 3, 0.4, 0.2, 0.4], [15, 3, 0.2, 0.4, 0.6]]
+set_params = [[15, 1, 0.4, 0.2, 1], [15, 3, 0.2, 0.4, 0.6]]
 
 t_limite = 600
 n_rondas = 10
@@ -36,6 +35,7 @@ for ln in data:
 
     for rnd in range(n_rondas):
         resultados[f'UB_{rnd}'] = []
+        resultados[f'SOL_{rnd}'] = []
 
     for ind, params in enumerate(set_params):
         
@@ -51,6 +51,7 @@ for ln in data:
                                                         theta_2=theta_2, theta_3=theta_3, tiempo_lim=t_limite)
 
             resultados[f'UB_{rnd}'].append(lobo_res['vals_fitness'][-1])
+            resultados[f'SOL_{rnd}'].append(lobo_res['sols_uaflp'][-1])
 
             print(f'Finalizando corrida de set de parámetros {ind} para la instancia {inst} en la ronda {rnd}')
 
@@ -58,6 +59,6 @@ for ln in data:
 
     df = pd.DataFrame(resultados)
     df.set_index('set_params', inplace=True)    
-    df.to_excel(f'resultados-{inst}-set-params.xlsx')
+    df.to_excel(f'resultados-{inst}.xlsx')
 
 print('Se finalizaron todos los experimentos')
